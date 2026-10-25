@@ -94,3 +94,74 @@ O método irPara() recebe o nome da nova tela e atualiza telaAtual.
 A implementação é simples e atende aos dois comportamentos definidos no teste.
 
 Resultado esperado: os dois comandos expect() passam a corresponder aos resultados esperados. */
+/* ======================================================================================================================================== */
+/* 🔵 3. PASSO REFACTOR 🔵 — Melhoria do código e dos testes
+
+Na última etapa, melhoramos a organização do código, centralizamos os nomes das telas e 
+adicionamos uma validação para impedir a navegação para destinos inexistentes. */
+
+const TELAS = Object.freeze({
+  LISTAGEM: "ListagemAtividades",
+  CADASTRO: "CadastroEdicao",
+  CALENDARIO: "CalendarioTreinos",
+  HISTORICO: "HistoricoDesempenho",
+});
+
+class Navegador {
+  constructor() {
+    this.telaAtual = TELAS.LISTAGEM;
+  }
+
+  irPara(novaTela) {
+    const telasValidas = Object.values(TELAS);
+
+    if (!telasValidas.includes(novaTela)) {
+      throw new Error("Tela não encontrada");
+    }
+
+    this.telaAtual = novaTela;
+  }
+}
+
+/* Testes do comportamento e da melhoria */
+
+describe("Fluxo de Navegação (Passo REFACTOR)", () => {
+  test("Deve iniciar na listagem e permitir ir para o cadastro", () => {
+    const nav = new Navegador();
+
+    expect(nav.telaAtual).toBe(TELAS.LISTAGEM);
+
+    nav.irPara(TELAS.CADASTRO);
+
+    expect(nav.telaAtual).toBe(TELAS.CADASTRO);
+  });
+
+  test("Não deve permitir navegar para uma tela inexistente", () => {
+    const nav = new Navegador();
+
+    expect(() => nav.irPara("TelaInexistente")).toThrow("Tela não encontrada");
+
+    expect(nav.telaAtual).toBe(TELAS.LISTAGEM);
+  });
+});
+
+/* O que melhorou?
+
+Os nomes das telas foram centralizados em TELAS, facilitando a manutenção.
+Object.freeze() impede alterações acidentais nas propriedades do objeto de constantes.
+A navegação valida se o destino existe antes de alterar a tela atual.
+O teste adicional verifica o tratamento de um destino inválido e confirma que a tela atual permanece inalterada.
+
+Resultado esperado: os testes originais continuam passando, e o novo teste verifica a proteção adicionada. */
+
+/* ============================================================================================================================================== */
+/* 
+CONCLUSÃO
+
+Este exercício demonstra o ciclo TDD aplicado a uma estrutura de navegação de um aplicativo fictício de atividades físicas.
+Na etapa RED, definimos o comportamento esperado; na GREEN, implementamos a solução mínima; e na REFACTOR, melhoramos 
+a organização e a validação sem comprometer os comportamentos já testados.
+Tudo aqui foi feito de forma ficticia.
+
+A atividade utiliza o Jest como referência para a escrita de testes automatizados e aplica princípios de 
+simplicidade, organização e melhoria contínua associados às práticas de XP. */
